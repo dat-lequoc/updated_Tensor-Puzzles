@@ -19,7 +19,7 @@ function in the NumPy standard library without magic.
 
 I recommend running in Colab. Click here and copy the notebook to get start.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/Tensor-Puzzles/blob/main/Tensor%20Puzzlers.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dat-lequoc/updated_Tensor-Puzzles/blob/main/Tensor%20Puzzlers.ipynb)
 
 If you are interested, there is also a youtube walkthrough of the puzzles 
 
@@ -29,7 +29,7 @@ If you are interested, there is also a youtube walkthrough of the puzzles
 %pip install -q "torch==2.14.0" "numpy==2.5.3" "jaxtyping==0.3.11" "hypothesis==6.168.0" "ipython==9.17.1" "pytest==9.1.1"
 from pathlib import Path
 import urllib.request
-urllib.request.urlretrieve("https://raw.githubusercontent.com/srush/Tensor-Puzzles/main/lib.py", "lib.py")
+urllib.request.urlretrieve("https://raw.githubusercontent.com/dat-lequoc/updated_Tensor-Puzzles/main/lib.py", "lib.py")
 ```
 
 
