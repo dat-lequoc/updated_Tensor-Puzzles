@@ -26,8 +26,10 @@ If you are interested, there is also a youtube walkthrough of the puzzles
 [![Watch the video](https://img.youtube.com/vi/SiwTAyyvt5s/default.jpg)](https://youtu.be/Hafo7hIl8MU)
 
 ```python
-!pip install -qqq torchtyping hypothesis pytest git+https://github.com/danoneata/chalk@srush-patch-1
-!wget -q https://github.com/srush/Tensor-Puzzles/raw/main/lib.py
+%pip install -q "torch==2.14.0" "numpy==2.5.3" "jaxtyping==0.3.11" "hypothesis==6.168.0" "ipython==9.17.1" "pytest==9.1.1"
+from pathlib import Path
+import urllib.request
+urllib.request.urlretrieve("https://raw.githubusercontent.com/srush/Tensor-Puzzles/main/lib.py", "lib.py")
 ```
 
 
@@ -35,7 +37,7 @@ If you are interested, there is also a youtube walkthrough of the puzzles
 from lib import draw_examples, make_test, run_test
 import torch
 import numpy as np
-from torchtyping import TensorType as TT
+from jaxtyping import Bool, Float, Integer, Shaped
 tensor = torch.tensor
 ```
 
@@ -122,7 +124,7 @@ def ones_spec(out):
     for i in range(len(out)):
         out[i] = 1
         
-def ones(i: int) -> TT["i"]:
+def ones(i: int) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 test_ones = make_test("one", ones, ones_spec, add_sizes=["i"])
@@ -150,7 +152,7 @@ def sum_spec(a, out):
     for i in range(len(a)):
         out[0] += a[i]
         
-def sum(a: TT["i"]) -> TT[1]:
+def sum(a: Shaped[torch.Tensor, "i"]) -> Shaped[torch.Tensor, "1"]:
     raise NotImplementedError
 
 
@@ -179,7 +181,7 @@ def outer_spec(a, b, out):
         for j in range(len(out[0])):
             out[i][j] = a[i] * b[j]
             
-def outer(a: TT["i"], b: TT["j"]) -> TT["i", "j"]:
+def outer(a: Shaped[torch.Tensor, "i"], b: Shaped[torch.Tensor, "j"]) -> Shaped[torch.Tensor, "i j"]:
     raise NotImplementedError
     
 test_outer = make_test("outer", outer, outer_spec)
@@ -206,7 +208,7 @@ def diag_spec(a, out):
     for i in range(len(a)):
         out[i] = a[i][i]
         
-def diag(a: TT["i", "i"]) -> TT["i"]:
+def diag(a: Shaped[torch.Tensor, "i i"]) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 
@@ -234,7 +236,7 @@ def eye_spec(out):
     for i in range(len(out)):
         out[i][i] = 1
         
-def eye(j: int) -> TT["j", "j"]:
+def eye(j: int) -> Shaped[torch.Tensor, "j j"]:
     raise NotImplementedError
     
 test_eye = make_test("eye", eye, eye_spec, add_sizes=["j"])
@@ -265,7 +267,7 @@ def triu_spec(out):
             else:
                 out[i][j] = 0
                 
-def triu(j: int) -> TT["j", "j"]:
+def triu(j: int) -> Shaped[torch.Tensor, "j j"]:
     raise NotImplementedError
 
 
@@ -295,7 +297,7 @@ def cumsum_spec(a, out):
         out[i] = total + a[i]
         total += a[i]
 
-def cumsum(a: TT["i"]) -> TT["i"]:
+def cumsum(a: Shaped[torch.Tensor, "i"]) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 test_cumsum = make_test("cumsum", cumsum, cumsum_spec)
@@ -323,7 +325,7 @@ def diff_spec(a, out):
     for i in range(1, len(out)):
         out[i] = a[i] - a[i - 1]
 
-def diff(a: TT["i"], i: int) -> TT["i"]:
+def diff(a: Shaped[torch.Tensor, "i"], i: int) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 test_diff = make_test("diff", diff, diff_spec, add_sizes=["i"])
@@ -351,7 +353,7 @@ def vstack_spec(a, b, out):
         out[0][i] = a[i]
         out[1][i] = b[i]
 
-def vstack(a: TT["i"], b: TT["i"]) -> TT[2, "i"]:
+def vstack(a: Shaped[torch.Tensor, "i"], b: Shaped[torch.Tensor, "i"]) -> Shaped[torch.Tensor, "2 i"]:
     raise NotImplementedError
 
 
@@ -382,7 +384,7 @@ def roll_spec(a, out):
         else:
             out[i] = a[i + 1 - len(out)]
             
-def roll(a: TT["i"], i: int) -> TT["i"]:
+def roll(a: Shaped[torch.Tensor, "i"], i: int) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 
@@ -410,7 +412,7 @@ def flip_spec(a, out):
     for i in range(len(out)):
         out[i] = a[len(out) - i - 1]
         
-def flip(a: TT["i"], i: int) -> TT["i"]:
+def flip(a: Shaped[torch.Tensor, "i"], i: int) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 
@@ -442,7 +444,7 @@ def compress_spec(g, v, out):
             out[j] = v[i]
             j += 1
             
-def compress(g: TT["i", bool], v: TT["i"], i:int) -> TT["i"]:
+def compress(g: Bool[torch.Tensor, "i"], v: Shaped[torch.Tensor, "i"], i:int) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 
@@ -472,7 +474,7 @@ def pad_to_spec(a, out):
         out[i] = a[i]
 
 
-def pad_to(a: TT["i"], i: int, j: int) -> TT["j"]:
+def pad_to(a: Shaped[torch.Tensor, "i"], i: int, j: int) -> Shaped[torch.Tensor, "j"]:
     raise NotImplementedError
 
 
@@ -505,7 +507,7 @@ def sequence_mask_spec(values, length, out):
             else:
                 out[i][j] = 0
     
-def sequence_mask(values: TT["i", "j"], length: TT["i", int]) -> TT["i", "j"]:
+def sequence_mask(values: Shaped[torch.Tensor, "i j"], length: Integer[torch.Tensor, "i"]) -> Shaped[torch.Tensor, "i j"]:
     raise NotImplementedError
 
 
@@ -540,7 +542,7 @@ def bincount_spec(a, out):
     for i in range(len(a)):
         out[a[i]] += 1
         
-def bincount(a: TT["i"], j: int) -> TT["j"]:
+def bincount(a: Shaped[torch.Tensor, "i"], j: int) -> Shaped[torch.Tensor, "j"]:
     raise NotImplementedError
 
 
@@ -575,7 +577,7 @@ def scatter_add_spec(values, link, out):
     for j in range(len(values)):
         out[link[j]] += values[j]
         
-def scatter_add(values: TT["i"], link: TT["i"], j: int) -> TT["j"]:
+def scatter_add(values: Shaped[torch.Tensor, "i"], link: Shaped[torch.Tensor, "i"], j: int) -> Shaped[torch.Tensor, "j"]:
     raise NotImplementedError
 
 
@@ -613,7 +615,7 @@ def flatten_spec(a, out):
             out[k] = a[i][j]
             k += 1
 
-def flatten(a: TT["i", "j"], i:int, j:int) -> TT["i * j"]:
+def flatten(a: Shaped[torch.Tensor, "i j"], i:int, j:int) -> Shaped[torch.Tensor, "i*j"]:
     raise NotImplementedError
 
 test_flatten = make_test("flatten", flatten, flatten_spec, add_sizes=["i", "j"])
@@ -638,9 +640,9 @@ Compute [linspace](https://numpy.org/doc/stable/reference/generated/numpy.linspa
 ```python
 def linspace_spec(i, j, out):
     for k in range(len(out)):
-        out[k] = float(i + (j - i) * k / max(1, len(out) - 1))
+        out[k] = float(i[0] + (j[0] - i[0]) * k / max(1, len(out) - 1))
 
-def linspace(i: TT[1], j: TT[1], n: int) -> TT["n", float]:
+def linspace(i: Shaped[torch.Tensor, "1"], j: Shaped[torch.Tensor, "1"], n: int) -> Float[torch.Tensor, "n"]:
     raise NotImplementedError
 
 test_linspace = make_test("linspace", linspace, linspace_spec, add_sizes=["n"])
@@ -670,7 +672,7 @@ def heaviside_spec(a, b, out):
         else:
             out[k] = int(a[k] > 0)
 
-def heaviside(a: TT["i"], b: TT["i"]) -> TT["i"]:
+def heaviside(a: Shaped[torch.Tensor, "i"], b: Shaped[torch.Tensor, "i"]) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 test_heaviside = make_test("heaviside", heaviside, heaviside_spec)
@@ -703,7 +705,7 @@ def constraint_set(d):
     return d
 
             
-def repeat(a: TT["i"], d: TT[1]) -> TT["d", "i"]:
+def repeat(a: Shaped[torch.Tensor, "i"], d: Shaped[torch.Tensor, "1"]) -> Shaped[torch.Tensor, "d i"]:
     raise NotImplementedError
 
 test_repeat = make_test("repeat", repeat, repeat_spec, constraint=constraint_set)
@@ -731,7 +733,7 @@ def constraint_set(d):
     return d
 
             
-def bucketize(v: TT["i"], boundaries: TT["j"]) -> TT["i"]:
+def bucketize(v: Shaped[torch.Tensor, "i"], boundaries: Shaped[torch.Tensor, "j"]) -> Shaped[torch.Tensor, "i"]:
     raise NotImplementedError
 
 test_bucketize = make_test("bucketize", bucketize, bucketize_spec,
@@ -773,3 +775,8 @@ for fn in fns:
     bincount 29
     scatter_add 29
 
+
+
+## Updated environment
+
+The notebook now targets Python 3.12 or newer, PyTorch 2.14, NumPy 2.5, and the maintained `jaxtyping` annotation syntax. The old `torchtyping` dependency and Chalk Git fork have been removed; the example renderer is a small dependency-free SVG helper in `lib.py`. Install the pinned environment with `python -m pip install -r requirements.txt`.

@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=78"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tensor-puzzles"
+version = "0.1.0"
+description = "Twenty-one broadcasting puzzles for learning PyTorch tensor programming"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+dependencies = [
+  "torch==2.14.0",
+  "numpy==2.5.3",
+  "jaxtyping==0.3.11",
+  "hypothesis==6.168.0",
+  "ipython==9.17.1",
+]
+
+[tool.setuptools]
+py-modules = ["lib"]
+
+[project.optional-dependencies]
+notebook = [
+  "ipykernel==7.3.0",
+  "jupyterlab==4.6.3",
+  "nbclient==0.11.0",
+  "nbconvert==7.17.1",
+  "nbformat==5.11.1",
+  "jupytext==1.19.5",
+]
+test = ["pytest==9.1.1"]
+dev = ["ruff==0.16.7", "tensor-puzzles[test,notebook]"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
